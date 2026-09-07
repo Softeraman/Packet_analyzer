@@ -1,0 +1,31 @@
+name: Import exact project source
+
+on:
+  push:
+    paths:
+      - '.source-import-trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import exact source commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$RUNNER_TEMP/exact-source"
+          rm -rf "$tmp"
+          git clone -q https://github.com/yadven7/Deep-Packet-Inspection-DPI-Engine.git "$tmp"
+          git -C "$tmp" checkout -q 49f4da3dc64df5a2f9a099e00742aa6af72d7c7d
+          rm -rf "$tmp/.git"
+          rsync -a --delete --exclude='.git/' --exclude='.github/' --exclude='.source-import-trigger' --exclude='.project-import.zip' "$tmp/" ./
+          rm -rf .github .source-import-trigger .project-import.zip
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Import complete Packet Analyzer project"
+          git push
