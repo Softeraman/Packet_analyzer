@@ -2,7 +2,7 @@
 
 The web demo wraps the existing C++ PCAP reader, packet parser, SNI/HTTP hostname extractors and application classifier. A small Python standard-library HTTP adapter accepts a capture and invokes the compiled native engine. No paid API or database is needed.
 
-Import `codex/vercel-live-demo` in Vercel. `Dockerfile.vercel` builds the native executable, runs the sample/filter/validation tests and starts the web server on `PORT` (default 80). This uses Vercel's Container Runtime.
+Import `main` in Vercel. `Dockerfile.vercel` builds the native executable, runs the sample/filter/validation tests and starts the web server on `PORT` (default 80). This uses Vercel's Container Runtime.
 
 ## Included
 
