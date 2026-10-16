@@ -65,6 +65,14 @@ AppType sniToAppType(const std::string& sni) {
     std::transform(lower_sni.begin(), lower_sni.end(), lower_sni.begin(),
                    [](unsigned char c) { return std::tolower(c); });
     
+    // Short domain names must match a hostname boundary. Substring matches
+    // such as t.co otherwise match microsoft.com, and x.com matches netflix.com.
+    auto isDomain = [&lower_sni](const std::string& domain) {
+        return lower_sni == domain ||
+            (lower_sni.size() > domain.size() &&
+             lower_sni.compare(lower_sni.size() - domain.size(), domain.size(), domain) == 0 &&
+             lower_sni[lower_sni.size() - domain.size() - 1] == '.');
+    };
     // Check for known patterns
     // Google (including YouTube, which is owned by Google)
     if (lower_sni.find("google") != std::string::npos ||
@@ -107,8 +115,7 @@ AppType sniToAppType(const std::string& sni) {
     // Twitter/X
     if (lower_sni.find("twitter") != std::string::npos ||
         lower_sni.find("twimg") != std::string::npos ||
-        lower_sni.find("x.com") != std::string::npos ||
-        lower_sni.find("t.co") != std::string::npos) {
+        isDomain("x.com") || isDomain("t.co")) {
         return AppType::TWITTER;
     }
     

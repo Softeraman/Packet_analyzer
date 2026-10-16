@@ -44,7 +44,10 @@ int main(int argc,char** argv) {
             if(!host)host=HTTPHostExtractor::extract(p.payload_data,p.payload_length);
             if(host)f.host=*host;
         }
-        if(!f.host.empty())f.app=appTypeToString(sniToAppType(f.host));
+        if(!f.host.empty()) {
+            f.app=appTypeToString(sniToAppType(f.host));
+            if(f.app=="HTTPS" && (p.src_port==80 || p.dest_port==80))f.app="HTTP";
+        }
         if(f.app=="Unknown") {
             if(p.src_port==53||p.dest_port==53)f.app="DNS";
             else if(p.src_port==443||p.dest_port==443)f.app=p.has_udp?"QUIC":"HTTPS";

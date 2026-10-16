@@ -22,6 +22,8 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(report['allowedPackets'], report['analyzedPackets'])
         self.assertEqual(report['blockedPackets'], 0)
         self.assertTrue(any(f['application']=='YouTube' and f['hostname'] for f in report['flows']))
+        for host, app in [('www.netflix.com','Netflix'), ('www.microsoft.com','Microsoft'), ('example.com','HTTP')]:
+            self.assertTrue(any(f['hostname']==host and f['application']==app for f in report['flows']), host)
 
     def test_application_domain_and_address_rules(self):
         for kwargs in ({'app':'YouTube'}, {'domain':'youtube'}, {'ip':'192.168.1.50'}):
