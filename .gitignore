@@ -1,0 +1,6 @@
+web_analyzer
+web_analyzer.exe
+__pycache__/
+build/
+*.log
+.env

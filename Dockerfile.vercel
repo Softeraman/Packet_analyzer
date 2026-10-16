@@ -1,0 +1,16 @@
+FROM gcc:12-bookworm AS build
+WORKDIR /build
+COPY include ./include
+COPY src ./src
+RUN g++ -std=c++17 -O2 -Iinclude src/web_analyzer.cpp src/pcap_reader.cpp src/packet_parser.cpp src/sni_extractor.cpp src/types.cpp -o web_analyzer
+
+FROM python:3.12-slim-bookworm
+RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY --from=build /build/web_analyzer ./web_analyzer
+COPY web ./web
+COPY test_dpi.pcap .
+RUN python web/test_engine.py
+ENV PORT=80
+EXPOSE 80
+CMD ["python", "web/server.py"]
